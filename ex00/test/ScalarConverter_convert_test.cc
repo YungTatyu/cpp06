@@ -400,3 +400,9 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 		nim += 1.5;
 	}
 }
+
+TEST(ScalarConverter_convertTest, charInput) {
+
+	for (char i = ' '; i <= '~'; i++)
+		_execTest<char>(i);
+}

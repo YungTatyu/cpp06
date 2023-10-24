@@ -42,6 +42,9 @@ int	main()
 	std::cout << 42.1f << '\n';
 
 
+	ss.str("");
+	ss << 'a';
+	std::cout << ss.str() << '\n';
 	// num = static_cast<float>(INT_MIN + 1);
 // 	int bit = 24;
 // 	num = static_cast<float>(-(1 << bit) + 1);
