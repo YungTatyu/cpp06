@@ -15,36 +15,54 @@ int	main()
 	// num = static_cast<double>(INT_MAX);
 	// int num = static_cast<float>(INT_MAX);
 	// std::cout << num << "\n";
-	int num = static_cast<float>(1 << 23);
+	// int num = static_cast<float>(1 << 23);
 
-	std::cout << std::numeric_limits<float>::max() + 10.0f << "\n";
-	num = static_cast<float>(1 << 24);
-	std::cout << num << "\n";
-	double	n = NAN;
-	std::cout << n << '\n';
-	float pos_inf = std::numeric_limits<float>::infinity();  // 正の無限大
-	float neg_inf = -std::numeric_limits<float>::infinity(); // 負の無限大
+	// std::cout << std::numeric_limits<float>::max() + 10.0f << "\n";
+	// num = static_cast<float>(1 << 24);
+	// std::cout << num << "\n";
+	// double	n = NAN;
+	// std::cout << n << '\n';
+	// float pos_inf = std::numeric_limits<float>::infinity();  // 正の無限大
+	// float neg_inf = -std::numeric_limits<float>::infinity(); // 負の無限大
 
-	std::cout << "Positive Infinity: " << pos_inf << std::endl;
-	std::cout << "Negative Infinity: " << neg_inf << std::endl;
-
-
-	n = NAN;
-	const float	fNum = static_cast<float>(n);
-	std::cout << fNum << "\n";
-
-	float	f = FLT_MIN;
-	std::cout << f << '\n' << FLT_MIN << '\n';
-	std::stringstream ss;
-
-	ss << f;
-	std::cout << "str=" << ss.str() << '\n';
-	std::cout << 42.1f << '\n';
+	// std::cout << "Positive Infinity: " << pos_inf << std::endl;
+	// std::cout << "Negative Infinity: " << neg_inf << std::endl;
 
 
-	ss.str("");
-	ss << 'a';
-	std::cout << ss.str() << '\n';
+	// n = NAN;
+	// const float	fNum = static_cast<float>(n);
+	// std::cout << fNum << "\n";
+
+	// float	f = FLT_MIN;
+	// std::cout << f << '\n' << FLT_MIN << '\n';
+	// std::stringstream ss;
+
+	// ss << f;
+	// std::cout << "str=" << ss.str() << '\n';
+	// std::cout << 42.1f << '\n';
+
+
+	// ss.str("");
+	// ss << 'a';
+	// std::cout << ss.str() << '\n';
+
+	// INT_MIN;
+	std::istringstream iss("ABC");
+	char value;
+	char	remaining;
+	bool	b = iss >> value;
+	bool hasRmeining = iss >> remaining;
+	// bool	b = iss.operator>>(value);
+	std::cout << "b=" << b << "\n";
+	std::cout << "value="  << value << "\n";
+	std::cout  << "isFail=" << iss.fail() << "\n";
+	std::cout  << "remaining=" << remaining << "\n";
+	std::cout  << "hasremaining=" << hasRmeining << "\n";
+
+	std::cout << "floatmax=" << FLT_MAX << '\n';
+	std::cout << "doublemax=" << DBL_MAX << '\n';
+	std::cout << "float cast doublemax=" << static_cast<float>(DBL_MAX) << '\n';
+
 	// num = static_cast<float>(INT_MIN + 1);
 // 	int bit = 24;
 // 	num = static_cast<float>(-(1 << bit) + 1);

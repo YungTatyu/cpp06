@@ -7,7 +7,8 @@ ifdef	DEBUG
 endif
 
 SRCS_DIR = src
-SRC =	main.cpp
+SRC =	main.cpp	\
+		ScalarConverter.cpp
 SRCS = $(addprefix $(SRCS_DIR)/, $(SRC))
 
 INCLUDES_DIR = include
