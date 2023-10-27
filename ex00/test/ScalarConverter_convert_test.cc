@@ -19,7 +19,6 @@ const std::string	g_expect_double = "double: ";
 #define NANF "nanf"
 
 template <typename T>
-
 static std::stirng	_getExpectCharValue(T input)
 {
 	if (
