@@ -1,10 +1,5 @@
 #include "ScalarConverter.hpp"
 
-// #define INFF "inff"
-// #define PINFF "+inff"
-// #define NINFF "-inff"
-// #define NANF "nanf"
-
 #define DBLE ".0"
 #define FLTE "f"
 
@@ -46,27 +41,6 @@ enum ScalarConverter::type	ScalarConverter::_getStringType(const std::string& st
 		return TP_STR;
 }
 
-// float	ScalarConverter::_getFloatInfOrNan(const std::string& str)
-// {
-// 	float	value = 0.0f;
-
-// 	if (str == INFF)
-// 		value = std::numeric_limits<float>::infinity();
-// 	else if (str == PINFF)
-// 		value = +std::numeric_limits<float>::infinity();
-// 	else if (str == NINFF)
-// 		value = -std::numeric_limits<float>::infinity();
-// 	else if (str == NANF)
-// 		value = std::numeric_limits<float>::quiet_NaN();
-// 	return value;
-// }
-
-
-// bool	ScalarConverter::_isFloatInfOrNan(const std::string& str)
-// {
-// 	return str == INFF || str == PINFF || str == NINFF || str == NANF;
-// }
-
 std::string	ScalarConverter::_popbackF(const std::string& str)
 {
 	std::string	copy = str;
@@ -101,7 +75,6 @@ void	ScalarConverter::_convertChar(char c)
 
 void	ScalarConverter::_convertInt(int num)
 {
-	std::cout << "_convertInt called\n";
 	const std::string	charValue = _getCharValue(num);
 	const std::string	intValue = convertToString<int>(num);
 	const std::string	floatValue = convertToString<float>(static_cast<float>(num)) + DBLE + FLTE;
@@ -113,7 +86,6 @@ void	ScalarConverter::_convertFloat(float num)
 {
 	const int	intNum = static_cast<int>(num);
 
-	std::cout << "_convertFloat called\n";
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<float>(num);
 	const std::string	floatValue = convertToString<float>(num) + FLTE;
@@ -125,7 +97,6 @@ void	ScalarConverter::_convertDouble(double num)
 {
 	const int	intNum = static_cast<int>(num);
 
-	std::cout << "_convertDouble called\n";
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<double>(num);
 	const std::string	floatValue = _getFloatValue<float, double>(num) + FLTE;
@@ -137,7 +108,6 @@ std::string	ScalarConverter::_getCharValue(int num)
 {
 	std::string	charValue;
 
-	std::cout << num << '\n';
 	if (num > ASCII_NUM || num < 0)
 		return IMPOSSIBLE;
 	else

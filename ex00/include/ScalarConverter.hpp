@@ -34,8 +34,6 @@ private:
 	static void	_convertFloat(float num);
 	static void	_convertDouble(double num);
 	static bool	_isConvertibleToAscii(const std::string& str);
-	// static bool	_isFloatInfOrNan(const std::string& str);
-	// static float	_getFloatInfOrNan(const std::string& str);
 	static std::string	_popbackF(const std::string& str);
 
 	template <typename T>
