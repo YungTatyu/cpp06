@@ -13,6 +13,9 @@
 #define IMPOSSIBLE "impossible"
 #define NOPRINT "Non displayable"
 
+#define PNAN "+nan"
+#define NNAN "-nan"
+
 
 class ScalarConverter
 {
@@ -31,6 +34,8 @@ private:
 	static void	_convertFloat(float num);
 	static void	_convertDouble(double num);
 	static bool	_isConvertibleToAscii(const std::string& str);
+	static bool	_isFloatInfOrNan(const std::string& str);
+	static float	_getFloatInfOrNan(const std::string& str);
 
 	template <typename T>
 	static bool	_isConvertible(const std::string& str)
@@ -41,6 +46,8 @@ private:
 		const bool	isSuccess = iss >> value;
 		const bool	hasRemaining = iss >> remaining;
 
+		if (str == PNAN || str == NNAN)
+			return false;
 		return isSuccess && !hasRemaining;
 	};
 	static void	_print(const std::string& charValue, const std::string& intValue,
@@ -65,7 +72,7 @@ private:
 	{
 		const T1	max = static_cast<T1>(std::numeric_limits<T2>::max());
 		const T1	min = static_cast<T1>(std::numeric_limits<T2>::min());
-		if ((!std::isinf(max) && !std::isinf(min)) && (num > max || num < min))
+		if ((!std::isinf(max) && !std::isinf(min) && !std::isinf(num)) && (num > max || num < min))
 			return IMPOSSIBLE;
 
 		std::stringstream ss;
@@ -80,77 +87,12 @@ public:
 		std::istringstream iss(str);
 		T	value;
 
-		iss >> value;
+		if (_isFloatInfOrNan(str))
+			value = _getFloatInfOrNan(str);
+		else
+			iss >> value;
 		return value;
 	}
 };
-
-/**
- * @brief 文字列をint, float, doubleに変換し、成功すればtrue、失敗すればfalseを返す
- *
- * 余りがある場合はfalseを返す
- *
- * @tparam T
- * @param str
- * @return true
- * @return false
- */
-// template<typename T>
-// bool	ScalarConverter<T>::_isConvertible(const std::string& str) const
-// {
-// 	std::istringstream iss(str);
-// 	T	value; //指定された型に変換する
-// 	char	remaining; //余り
-// 	const bool	isSuccess = iss >> value;
-// 	const bool	hasRemaining = iss >> remaining;
-
-// 	return isSuccess && !hasRemaining;
-// }
-
-// template<typename T>
-// std::string	ScalarConverter<T>::_getIntValue(T num)
-// {
-// 	const T	max = static_cast<T>(std::numeric_limits<int>::max());
-// 	const T	min = static_cast<T>(std::numeric_limits<int>::min());
-// 	if (num > max || num < min)
-// 		return IMPOSSIBLE;
-
-// 	std::stringstream ss;
-// 	ss << static_cast<int>(num);
-// 	return ss.str();
-// }
-
-// template<typename T>
-// T	ScalarConverter<T>::stringToType(const std::string& str)
-// {
-// 	std::istringstream iss(str);
-// 	T	value;
-
-// 	iss >> value;
-// 	return value;
-// }
-
-/**
- * @brief T1型をT2型に変更した結果の文字列を作成する
- *
- * T2型のoverflowをチェック
- *
- * @tparam T1
- * @tparam T2
- * @param num
- * @return std::stirng
- */
-// template<typename T1, typename T2>
-// static std::stirng	ScalarConverter<T1, T2>::_getFloatValue(T1 num)
-// {
-// 	const T1	max = static_cast<T1>(std::numeric_limits<T2>::max());
-// 	const T1	min = static_cast<T1>(std::numeric_limits<T2>::min());
-// 	if ((!std::isinf(max) && !std::isinf(min)) && (num > max || num < min))
-// 		return IMPOSSIBLE;
-
-// 	std::stringstream ss;
-// 	ss << static_cast<T2>(num);
-// 	return ss.str();
-// }
 
 #endif

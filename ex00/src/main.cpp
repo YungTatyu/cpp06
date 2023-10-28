@@ -22,7 +22,8 @@ int	main(int argc, char *argv[])
 {
 	while (argc != 1)
 	{
-		ScalarConverter::convert(argv[--argc]);
+		std::cout << "converting " << argv[--argc] << "...\n";
+		ScalarConverter::convert(argv[argc]);
 		std::cout << "\n";
 	}
 
