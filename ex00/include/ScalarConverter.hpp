@@ -44,8 +44,8 @@ private:
 		std::istringstream iss(str);
 		T	value; //指定された型に変換する
 		char	remaining; //余り
-		const bool	isSuccess = iss >> value;
-		const bool	hasRemaining = iss >> remaining;
+		const bool	isSuccess = static_cast<bool>(iss >> value);
+		const bool	hasRemaining = static_cast<bool>(iss >> remaining);
 
 		if (str == PNAN || str == NNAN)
 			return false;
@@ -91,7 +91,7 @@ public:
 
 		return ss.str();
 	}
-	
+
 	template <typename T>
 	static T	stringToType(const std::string& str)
 	{

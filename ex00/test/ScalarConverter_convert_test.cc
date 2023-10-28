@@ -12,32 +12,39 @@ const std::string	g_expect_float = "float: ";
 const std::string	g_expect_double = "double: ";
 
 #define POSITIVE_INF "+inf"
+#define INF "inf"
 #define NEGATIVE_INF "-inf"
 #define POSITIVE_INFF "+inff"
 #define NEGATIVE_INFF "-inff"
+#define INFF "inff"
 #define NAND "nan"
 #define NANF "nanf"
 
 template <typename T>
-static std::stirng	_getExpectCharValue(T input)
+static std::string	_getExpectCharValue(T input)
 {
+	const T	max = static_cast<T>(std::numeric_limits<int>::max());
+	const T	min = static_cast<T>(std::numeric_limits<int>::min());
+
 	if (
-		input > static_cast<T>(std::numeric_limits<int>::max())
-		|| input < static_cast<T>(std::numeric_limits<int>::min())
+		input > max
+		|| input < min
 		|| static_cast<int>(input) > ASCII_NUM
 		|| static_cast<int>(input) < 0
 	)
 		return "impossible";
 	else
-		return std::isprint(static_cast<unsigned char>(i)) ?
-				static_cast<unsigned char>(i) : "Non displayable";
+		return std::isprint(static_cast<int>(input)) ?
+				std::string(1, static_cast<char>(input)) : "Non displayable";
 }
-// template <typename T>
 
-static std::stirng	_getExpectIntValue(T input)
+template <typename T>
+static std::string	_getExpectIntValue(T input)
 {
-	if (input > static_cast<T>(std::numeric_limits<int>::max())
-		|| input < static_cast<T>(std::numeric_limits<int>::min()))
+	const T	max = static_cast<T>(std::numeric_limits<int>::max());
+	const T	min = static_cast<T>(std::numeric_limits<int>::min());
+
+	if (input > max || input < min)
 		return "impossible";
 	std::stringstream ss;
 
@@ -45,9 +52,8 @@ static std::stirng	_getExpectIntValue(T input)
 	return ss.str();
 }
 
-// template <typename T>
-
-static std::stirng	_getExpectFloatValue(T input)
+template <typename T>
+static std::string	_getExpectFloatValue(T input)
 {
 	if (input > static_cast<T>(std::numeric_limits<float>::max())
 		|| input < static_cast<T>(std::numeric_limits<float>::min()))
@@ -58,9 +64,8 @@ static std::stirng	_getExpectFloatValue(T input)
 	return ss.str() + "f";
 }
 
-// template <typename T>
-
-static std::stirng	_getExpectFloatValue(T input)
+template <typename T>
+static std::string	_getExpectDoubleValue(T input)
 {
 	if (input > static_cast<T>(std::numeric_limits<double>::max())
 		|| input < static_cast<T>(std::numeric_limits<double>::min()))
@@ -71,8 +76,11 @@ static std::stirng	_getExpectFloatValue(T input)
 	return ss.str();
 }
 
-TEST(ScalarConverter_convertTest, intRange) {
-	for (int i = INT_MIN; ; i++)
+TEST(ScalarConverter_convertTest, intMin) {
+
+	int	i = INT_MIN;
+
+	while (true)
 	{
 		std::stringstream input;
 		input << i;
@@ -80,18 +88,18 @@ TEST(ScalarConverter_convertTest, intRange) {
 		const float	dNum = static_cast<double>(i);
 
 		// if (i > ASCII_NUM || i < 0)
-		// 	const std::stirng	expect_charValue = "impossible";
+		// 	const std::string	expect_charValue = "impossible";
 		// else
-		// 	const std::stirng	expect_charValue = std::isprint(static_cast<unsigned char>(i)) ?
+		// 	const std::string	expect_charValue = std::isprint(static_cast<unsigned char>(i)) ?
 		// 		static_cast<unsigned char>(i) : "Non displayable";
-		const std::stirng	expect_charValue = _getExpectCharValue<int>(i);
+		const std::string	expect_charValue = _getExpectCharValue<int>(i);
 
 		std::stringstream ss;
 		ss << fNum;
-		const	std::stirng	expect_floatValue = ss.str() + ".0f";
+		const	std::string	expect_floatValue = ss.str() + ".0f";
 		ss.str("");
 		ss << dNum;
-		const	std::stirng	expect_doubleValue = ss.str() + ".0";
+		const	std::string	expect_doubleValue = ss.str() + ".0";
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();
 		ScalarConverter::convert(input.str());
@@ -105,8 +113,83 @@ TEST(ScalarConverter_convertTest, intRange) {
 			stdoutOutput
 		);
 		EXPECT_EQ("", stderrOutput);
-		if (i == INT_MAX)
+		if (i == INT_MIN + 100)
 			break;
+		i++;
+	}
+}
+
+TEST(ScalarConverter_convertTest, intMax) {
+
+	int	i = INT_MAX;
+
+	while (true)
+	{
+		std::stringstream input;
+		input << i;
+		const float	fNum = static_cast<float>(i);
+		const float	dNum = static_cast<double>(i);
+
+		const std::string	expect_charValue = _getExpectCharValue<int>(i);
+		std::stringstream ss;
+		ss << fNum;
+		const	std::string	expect_floatValue = ss.str() + ".0f";
+		ss.str("");
+		ss << dNum;
+		const	std::string	expect_doubleValue = ss.str() + ".0";
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(input.str());
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + expect_charValue + '\n' +
+			g_expect_int + input.str() + '\n' +
+			g_expect_float + expect_floatValue + '\n' +
+			g_expect_double + expect_doubleValue + '\n',
+			stdoutOutput
+		);
+		EXPECT_EQ("", stderrOutput);
+		if (i == INT_MAX - 100)
+			break;
+		i--;
+	}
+}
+
+TEST(ScalarConverter_convertTest, intZero) {
+
+	int	i = -100;
+
+	while (true)
+	{
+		std::stringstream input;
+		input << i;
+		const float	fNum = static_cast<float>(i);
+		const float	dNum = static_cast<double>(i);
+
+		const std::string	expect_charValue = _getExpectCharValue<int>(i);
+		std::stringstream ss;
+		ss << fNum;
+		const	std::string	expect_floatValue = ss.str() + ".0f";
+		ss.str("");
+		ss << dNum;
+		const	std::string	expect_doubleValue = ss.str() + ".0";
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(input.str());
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + expect_charValue + '\n' +
+			g_expect_int + input.str() + '\n' +
+			g_expect_float + expect_floatValue + '\n' +
+			g_expect_double + expect_doubleValue + '\n',
+			stdoutOutput
+		);
+		EXPECT_EQ("", stderrOutput);
+		if (i == 100)
+			break;
+		i++;
 	}
 }
 
@@ -118,16 +201,16 @@ TEST(ScalarConverter_convertTest, intOverFlow) {
 	std::stringstream input;
 	input << n;
 
-	const std::stirng	expect_charValue = "impossible";
+	const std::string	expect_charValue = "impossible";
 	std::stringstream ss;
 	ss << fNum;
-	const std::stirng	expect_floatValue = ss.str() + ".0f";
-	ss.str("";)
+	const std::string	expect_floatValue = ss.str() + ".0f";
+	ss.str("");
 	ss << dNum;
-	const std::stirng	expect_doubleValue = ss.str() + ".0";
+	const std::string	expect_doubleValue = ss.str() + ".0";
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
-	ScalarConverter::convert(n.str());
+	ScalarConverter::convert(input.str());
 	std::string stdoutOutput = testing::internal::GetCapturedStdout();
 	std::string stderrOutput = testing::internal::GetCapturedStderr();
 	EXPECT_EQ(
@@ -148,16 +231,16 @@ TEST(ScalarConverter_convertTest, intUnderFlow) {
 	std::stringstream input;
 	input << n;
 
-	const std::stirng	expect_charValue = "impossible";
+	const std::string	expect_charValue = "impossible";
 	std::stringstream ss;
 	ss << fNum;
-	const std::stirng	expect_floatValue = ss.str() + ".0f";
-	ss.str("";)
+	const std::string	expect_floatValue = ss.str() + ".0f";
+	ss.str("");
 	ss << dNum;
-	const std::stirng	expect_doubleValue = ss.str() + ".0";
+	const std::string	expect_doubleValue = ss.str() + ".0";
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
-	ScalarConverter::convert(n.str());
+	ScalarConverter::convert(input.str());
 	std::string stdoutOutput = testing::internal::GetCapturedStdout();
 	std::string stderrOutput = testing::internal::GetCapturedStderr();
 	EXPECT_EQ(
@@ -174,10 +257,10 @@ TEST(ScalarConverter_convertTest, nan) {
 
 	const std::string	input = NAND;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = NANF;
-	const std::stirng	expect_doubleValue = input;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = NANF;
+	const std::string	expect_doubleValue = input;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -198,10 +281,10 @@ TEST(ScalarConverter_convertTest, nanf) {
 
 	const std::string	input = NANF;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = input;
-	const std::stirng	expect_doubleValue = NAND;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = input;
+	const std::string	expect_doubleValue = NAND;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -218,14 +301,14 @@ TEST(ScalarConverter_convertTest, nanf) {
 }
 
 
-TEST(ScalarConverter_convertTest, +inf) {
+TEST(ScalarConverter_convertTest, pInf) {
 
 	const std::string	input = POSITIVE_INF;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = POSITIVE_INFF;
-	const std::stirng	expect_doubleValue = input;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = INF;
+	const std::string	expect_doubleValue = input;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -241,14 +324,14 @@ TEST(ScalarConverter_convertTest, +inf) {
 	EXPECT_EQ("", stderrOutput);
 }
 
-TEST(ScalarConverter_convertTest, -inf) {
+TEST(ScalarConverter_convertTest, nInf) {
 
 	const std::string	input = NEGATIVE_INF;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = NEGATIVE_INFF;
-	const std::stirng	expect_doubleValue = input;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = NEGATIVE_INFF;
+	const std::string	expect_doubleValue = input;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -264,14 +347,14 @@ TEST(ScalarConverter_convertTest, -inf) {
 	EXPECT_EQ("", stderrOutput);
 }
 
-TEST(ScalarConverter_convertTest, +inff) {
+TEST(ScalarConverter_convertTest, pInff) {
 
 	const std::string	input = POSITIVE_INFF;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = input;
-	const std::stirng	expect_doubleValue = POSITIVE_INF;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = input;
+	const std::string	expect_doubleValue = INFF;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -287,14 +370,14 @@ TEST(ScalarConverter_convertTest, +inff) {
 	EXPECT_EQ("", stderrOutput);
 }
 
-TEST(ScalarConverter_convertTest, -inff) {
+TEST(ScalarConverter_convertTest, nInff) {
 
 	const std::string	input = NEGATIVE_INFF;
 
-	const std::stirng	expect_charValue = "impossible";
-	const std::stirng	expect_intValue = "impossible";
-	const std::stirng	expect_floatValue = input;
-	const std::stirng	expect_doubleValue = NEGATIVE_INF;
+	const std::string	expect_charValue = "impossible";
+	const std::string	expect_intValue = "impossible";
+	const std::string	expect_floatValue = input;
+	const std::string	expect_doubleValue = NEGATIVE_INF;
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input);
@@ -310,14 +393,15 @@ TEST(ScalarConverter_convertTest, -inff) {
 	EXPECT_EQ("", stderrOutput);
 }
 
+template <typename T>
 static void	_execTest(T input)
 {
 	std::stringstream ss;
 	ss << input;
-	const std::stirng	expect_charValue = _getExpectCharValue<T>(input);
-	const std::stirng	expect_intValue = _getExpectIntValue<T>(input);
-	const std::stirng	expect_floatValue = _getExpectDoubleValue<T>(input);
-	const std::stirng	expect_doubleValue = _getExpectDoubleValue<T>(input);
+	const std::string	expect_charValue = _getExpectCharValue<T>(input);
+	const std::string	expect_intValue = _getExpectIntValue<T>(input);
+	const std::string	expect_floatValue = _getExpectDoubleValue<T>(input);
+	const std::string	expect_doubleValue = _getExpectDoubleValue<T>(input);
 
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
@@ -350,8 +434,8 @@ TEST(ScalarConverter_convertTest, floatMaxMin) {
 		}
 		else
 		{
-			negative += 0.123456789f
-			positive -= 0.123456789f
+			negative += 0.123456789f;
+			positive -= 0.123456789f;
 		}
 	}
 }
@@ -372,8 +456,8 @@ TEST(ScalarConverter_convertTest, doubleMaxMin) {
 		}
 		else
 		{
-			negative += 0.123456789f
-			positive -= 0.123456789f
+			negative += 0.123456789f;
+			positive -= 0.123456789f;
 		}
 	}
 }
@@ -385,7 +469,7 @@ TEST(ScalarConverter_convertTest, floatInput) {
 	for (int i = 0; i < 100; i++)
 	{
 		_execTest<float>(num);
-		nim += 1.5f;
+		num += 1.5f;
 	}
 }
 
@@ -396,7 +480,7 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 	for (int i = 0; i < 100; i++)
 	{
 		_execTest<double>(num);
-		nim += 1.5;
+		num += 1.5;
 	}
 }
 
