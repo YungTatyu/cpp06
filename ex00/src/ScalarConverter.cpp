@@ -1,9 +1,12 @@
 #include "ScalarConverter.hpp"
 
-#define INFF "inff"
-#define PINFF "+inff"
-#define NINFF "-inff"
-#define NANF "nanf"
+// #define INFF "inff"
+// #define PINFF "+inff"
+// #define NINFF "-inff"
+// #define NANF "nanf"
+
+#define DBLE ".0"
+#define FLTE "f"
 
 void	ScalarConverter::convert(std::string str)
 {
@@ -18,7 +21,7 @@ void	ScalarConverter::convert(std::string str)
 		_convertInt(stringToType<int>(str));
 		break;
 	case TP_FLOAT:
-		_convertFloat(stringToType<float>(str));
+		_convertFloat(stringToType<float>(_popbackF(str)));
 		break;
 	case TP_DOUBLE:
 		_convertDouble(stringToType<double>(str));
@@ -37,31 +40,40 @@ enum ScalarConverter::type	ScalarConverter::_getStringType(const std::string& st
 		return TP_INT;
 	else if (_isConvertible<double>(str))
 		return TP_DOUBLE;
-	else if (_isFloatInfOrNan(str) || _isConvertible<float>(str))
+	else if (_isConvertible<float>(_popbackF(str)))
 		return TP_FLOAT;
 	else
 		return TP_STR;
 }
 
-float	ScalarConverter::_getFloatInfOrNan(const std::string& str)
+// float	ScalarConverter::_getFloatInfOrNan(const std::string& str)
+// {
+// 	float	value = 0.0f;
+
+// 	if (str == INFF)
+// 		value = std::numeric_limits<float>::infinity();
+// 	else if (str == PINFF)
+// 		value = +std::numeric_limits<float>::infinity();
+// 	else if (str == NINFF)
+// 		value = -std::numeric_limits<float>::infinity();
+// 	else if (str == NANF)
+// 		value = std::numeric_limits<float>::quiet_NaN();
+// 	return value;
+// }
+
+
+// bool	ScalarConverter::_isFloatInfOrNan(const std::string& str)
+// {
+// 	return str == INFF || str == PINFF || str == NINFF || str == NANF;
+// }
+
+std::string	ScalarConverter::_popbackF(const std::string& str)
 {
-	float	value = 0.0f;
+	std::string	copy = str;
 
-	if (str == INFF)
-		value = std::numeric_limits<float>::infinity();
-	else if (str == PINFF)
-		value = +std::numeric_limits<float>::infinity();
-	else if (str == NINFF)
-		value = -std::numeric_limits<float>::infinity();
-	else if (str == NANF)
-		value = std::numeric_limits<float>::quiet_NaN();
-	return value;
-}
-
-
-bool	ScalarConverter::_isFloatInfOrNan(const std::string& str)
-{
-	return str == INFF || str == PINFF || str == NINFF || str == NANF;
+	if (!copy.empty() && *(copy.end() - 1) == 'f')
+		copy.erase(copy.end() - 1);
+	return copy;
 }
 
 /**
@@ -79,40 +91,32 @@ bool	ScalarConverter::_isConvertibleToAscii(const std::string& str)
 void	ScalarConverter::_convertChar(char c)
 {
 	const int	value = static_cast<int>(c);
-	std::stringstream	ss;
-	ss << value;
-	std::cout << "_convertChar called\n";
 
 	const std::string	charValue = std::string("'") + c + "'";
-	const std::string	intValue = ss.str();
-	const std::string	floatValue = ss.str() + ".0f";
-	const std::string	doubleValue = ss.str() + ".0";
+	const std::string	intValue = convertToString<int>(value);
+	const std::string	floatValue = convertToString<float>(static_cast<float>(value)) + DBLE + FLTE;
+	const std::string	doubleValue = convertToString<double>(static_cast<double>(value)) + DBLE;
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
 void	ScalarConverter::_convertInt(int num)
 {
-	std::stringstream	ss;
-	ss << num;
-
 	std::cout << "_convertInt called\n";
 	const std::string	charValue = _getCharValue(num);
-	const std::string	intValue = ss.str();
-	const std::string	floatValue = ss.str() + ".0f";
-	const std::string	doubleValue = ss.str() + ".0";
+	const std::string	intValue = convertToString<int>(num);
+	const std::string	floatValue = convertToString<float>(static_cast<float>(num)) + DBLE + FLTE;
+	const std::string	doubleValue = convertToString<double>(static_cast<double>(num)) + DBLE;
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
 void	ScalarConverter::_convertFloat(float num)
 {
 	const int	intNum = static_cast<int>(num);
-	std::stringstream	ss;
-	ss << num;
 
 	std::cout << "_convertFloat called\n";
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<float>(num);
-	const std::string	floatValue = ss.str() + "f";
+	const std::string	floatValue = convertToString<float>(num) + FLTE;
 	const std::string	doubleValue = _getFloatValue<double, float>(num);
 	_print(charValue, intValue, floatValue, doubleValue);
 }
@@ -120,14 +124,12 @@ void	ScalarConverter::_convertFloat(float num)
 void	ScalarConverter::_convertDouble(double num)
 {
 	const int	intNum = static_cast<int>(num);
-	std::stringstream	ss;
-	ss << num;
 
 	std::cout << "_convertDouble called\n";
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<double>(num);
-	const std::string	floatValue = _getFloatValue<float, double>(num) + "f";
-	const std::string	doubleValue = ss.str();
+	const std::string	floatValue = _getFloatValue<float, double>(num) + FLTE;
+	const std::string	doubleValue = convertToString<double>(num);
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 

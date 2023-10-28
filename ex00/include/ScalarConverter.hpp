@@ -34,8 +34,9 @@ private:
 	static void	_convertFloat(float num);
 	static void	_convertDouble(double num);
 	static bool	_isConvertibleToAscii(const std::string& str);
-	static bool	_isFloatInfOrNan(const std::string& str);
-	static float	_getFloatInfOrNan(const std::string& str);
+	// static bool	_isFloatInfOrNan(const std::string& str);
+	// static float	_getFloatInfOrNan(const std::string& str);
+	static std::string	_popbackF(const std::string& str);
 
 	template <typename T>
 	static bool	_isConvertible(const std::string& str)
@@ -59,7 +60,7 @@ private:
 	{
 		const T	max = static_cast<T>(std::numeric_limits<int>::max());
 		const T	min = static_cast<T>(std::numeric_limits<int>::min());
-		if (num > max || num < min)
+		if (std::isnan(num) || num > max || num < min)
 			return IMPOSSIBLE;
 
 		std::stringstream ss;
@@ -81,16 +82,23 @@ private:
 	}
 public:
 	static void	convert(std::string str);
+
+	template <typename T>
+	static std::string	convertToString(T value)
+	{
+		std::stringstream	ss;
+		ss << value;
+
+		return ss.str();
+	}
+	
 	template <typename T>
 	static T	stringToType(const std::string& str)
 	{
 		std::istringstream iss(str);
 		T	value;
 
-		if (_isFloatInfOrNan(str))
-			value = _getFloatInfOrNan(str);
-		else
-			iss >> value;
+		iss >> value;
 		return value;
 	}
 };
