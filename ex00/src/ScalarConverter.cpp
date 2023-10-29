@@ -101,6 +101,8 @@ void	ScalarConverter::_convertDouble(double num)
 	const std::string	intValue = _getIntValue<double>(num);
 	const std::string	floatValue = _getFloatValue<float, double>(num) + FLTE;
 	const std::string	doubleValue = convertToString<double>(num);
+	// std::string	doubleValue = convertToString<double>(num);
+	// doubleValue = doubleValue.find(".") == std::string::npos ? doubleValue + DBLE : doubleValue;
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 

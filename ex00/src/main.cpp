@@ -26,8 +26,18 @@ int	main(int argc, char *argv[])
 		ScalarConverter::convert(argv[argc]);
 		std::cout << "\n";
 	}
+	std::stringstream	ss;
+	// ss << DBL_MAX;
+	ss << DBL_MIN;
+	std::cout <<  ss.str() << "\n";
+	ScalarConverter::convert(ss.str());
+	std::cout << (0.0 < DBL_MIN) << "\n";
+	// std::istringstream iss(ss.str());
+	// double	value;
+	// iss >> value;
+	// std::cout << value << "\n";
 
-	std::cout <<  static_cast<float>(FLT_MIN) << "\n";
+	// std::cout <<  static_cast<float>(FLT_MIN) << "\n";
 	// std::cout << _getFloatValue<float, double>(1.1f) << "\n";
 	// std::cout << INT_MAX << "\n";
 	// std::cout << 2147483647.0f << "\n";

@@ -44,6 +44,10 @@ private:
 		char	remaining; //余り
 		const bool	isSuccess = static_cast<bool>(iss >> value);
 		const bool	hasRemaining = static_cast<bool>(iss >> remaining);
+		// std::cout << value <<"=value\n";
+		// std::cout << remaining <<"=remaining\n";
+		// std::cout << isSuccess <<"=isSuccess\n";
+		// std::cout << hasRemaining <<"=hasRemaing\n\n";
 
 		if (str == PNAN || str == NNAN)
 			return false;
@@ -69,10 +73,15 @@ private:
 	template <typename T1, typename T2>
 	static std::string	_getFloatValue(T1 num)
 	{
-		const T1	max = static_cast<T1>(std::numeric_limits<T2>::max());
-		const T1	min = static_cast<T1>(std::numeric_limits<T2>::min());
-		if ((!std::isinf(max) && !std::isinf(min) && !std::isinf(num)) && (num > max || num < min))
-			return IMPOSSIBLE;
+		// const T1	max = static_cast<T1>(std::numeric_limits<T2>::max());
+		// const T1	min = static_cast<T1>(std::numeric_limits<T2>::min());
+		// std::cout << "max: " << max << '\n';
+		// std::cout << "min: " << min << '\n';
+		// std::cout << "num: " << num << '\n';
+		// std::cout << "is num: " << (num < min) << (0.0f < min) << '\n';
+
+		// if ((!std::isinf(max) && !std::isinf(min) && !std::isinf(num)) && (num > max || num < min))
+		// 	return IMPOSSIBLE;
 
 		std::stringstream ss;
 		ss << static_cast<T2>(num);

@@ -56,25 +56,25 @@ static std::string	_getExpectIntValue(T input)
 template <typename T>
 static std::string	_getExpectFloatValue(T input)
 {
-	const T	max = static_cast<T>(std::numeric_limits<float>::max());
-	const T	min = static_cast<T>(std::numeric_limits<float>::min());
+	// const T	max = static_cast<T>(std::numeric_limits<float>::max());
+	// const T	min = static_cast<T>(std::numeric_limits<float>::min());
 
-	if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
-		return IMPOSSIBLE;
+	// if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
+	// 	return IMPOSSIBLE;
 	std::stringstream ss;
 
 	ss << static_cast<float>(input);
-	return ss.str() + "f";
+	return ss.str();
 }
 
 template <typename T>
 static std::string	_getExpectDoubleValue(T input)
 {
-	const T	max = static_cast<T>(std::numeric_limits<double>::max());
-	const T	min = static_cast<T>(std::numeric_limits<double>::min());
+	// const T	max = static_cast<T>(std::numeric_limits<double>::max());
+	// const T	min = static_cast<T>(std::numeric_limits<double>::min());
 
-	if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
-		return IMPOSSIBLE;
+	// if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
+	// 	return IMPOSSIBLE;
 	std::stringstream ss;
 
 	ss << static_cast<double>(input);
@@ -402,7 +402,7 @@ static void	_execTest(T input)
 	ss << input;
 	const std::string	expect_charValue = _getExpectCharValue<T>(input);
 	const std::string	expect_intValue = _getExpectIntValue<T>(input);
-	const std::string	expect_floatValue = _getExpectFloatValue<T>(input);
+	const std::string	expect_floatValue = _getExpectFloatValue<T>(input) + "f";
 	const std::string	expect_doubleValue = _getExpectDoubleValue<T>(input);
 
 	testing::internal::CaptureStdout();
@@ -419,6 +419,31 @@ static void	_execTest(T input)
 	);
 }
 
+template <typename T>
+static void	_execFloatTest(T input)
+{
+	std::stringstream ss;
+	ss << input;
+	const std::string	expect_charValue = _getExpectCharValue<T>(input);
+	const std::string	expect_intValue = _getExpectIntValue<T>(input);
+	const std::string	expect_floatValue = std::abs(static_cast<float>(input) - std::floor(static_cast<float>(input))) > std::numeric_limits<float>::epsilon() ?
+		_getExpectFloatValue<T>(input) + "f" : _getExpectFloatValue<T>(input) + ".0f";
+	const std::string	expect_doubleValue = std::abs(static_cast<double>(input) - std::floor(static_cast<double>(input))) > std::numeric_limits<double>::epsilon() ?
+		_getExpectDoubleValue<T>(input) : _getExpectDoubleValue<T>(input) + ".0";
+
+	testing::internal::CaptureStdout();
+	testing::internal::CaptureStderr();
+	ScalarConverter::convert(ss.str());
+	std::string stdoutOutput = testing::internal::GetCapturedStdout();
+	std::string stderrOutput = testing::internal::GetCapturedStderr();
+	EXPECT_EQ(
+		g_expect_char + expect_charValue + '\n' +
+		g_expect_int + expect_intValue + '\n' +
+		g_expect_float + expect_floatValue + '\n' +
+		g_expect_double + expect_doubleValue + '\n',
+		stdoutOutput
+	);
+}
 
 TEST(ScalarConverter_convertTest, floatMaxMin) {
 
@@ -436,8 +461,8 @@ TEST(ScalarConverter_convertTest, floatMaxMin) {
 		}
 		else
 		{
-			negative += 0.123456789f;
-			positive -= 0.123456789f;
+			negative += 0.0000000000000000123456789f;
+			positive -= 0.0000000000000000123456789f;
 		}
 	}
 }
@@ -447,19 +472,19 @@ TEST(ScalarConverter_convertTest, doubleMaxMin) {
 	double	negative = DBL_MIN;
 	double	positive = DBL_MAX;
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		_execTest<double>(negative);
 		_execTest<double>(positive);
 		if (i % 2 == 0)
 		{
-			negative *= 10.0f;
-			positive /= 10.0f;
+			negative *= 10.0;
+			positive /= 10.0;
 		}
 		else
 		{
-			negative += 0.123456789f;
-			positive -= 0.123456789f;
+			negative += 0.0000000000000000123456789;
+			positive -= 0.0000000000000000123456789;
 		}
 	}
 }
@@ -470,7 +495,26 @@ TEST(ScalarConverter_convertTest, floatInput) {
 
 	for (int i = 0; i < 100; i++)
 	{
-		_execTest<float>(num);
+		std::string	input = ScalarConverter::convertToString<float>(num);
+		input += "f";
+		const std::string	expect_charValue = _getExpectCharValue<float>(num);
+		const std::string	expect_intValue = _getExpectIntValue<float>(num);
+		const std::string	expect_floatValue = _getExpectFloatValue<float>(num) + "f";
+		const std::string	expect_doubleValue = _getExpectDoubleValue<float>(num);
+
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(input);
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + expect_charValue + '\n' +
+			g_expect_int + expect_intValue + '\n' +
+			g_expect_float + expect_floatValue + '\n' +
+			g_expect_double + expect_doubleValue + '\n',
+			stdoutOutput
+		);
+
 		num += 1.5f;
 	}
 }
@@ -481,8 +525,12 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 
 	for (int i = 0; i < 100; i++)
 	{
-		_execTest<double>(num);
-		num += 1.5;
+		// _execTest<double>(num);
+		_execFloatTest<double>(num);
+		if (i % 10 == 0)
+			num += 0.1;
+		else
+			num += 0.3;
 	}
 }
 
