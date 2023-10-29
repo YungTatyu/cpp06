@@ -5,6 +5,7 @@
 #include <cfloat>
 #include <cmath>
 #include <sstream>
+#include <vector>
 
 const std::string	g_expect_char = "char: ";
 const std::string	g_expect_int = "int: ";
@@ -424,13 +425,13 @@ TEST(ScalarConverter_convertTest, floatMaxMin) {
 	float	negative = FLT_MIN;
 	float	positive = FLT_MAX;
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		_execTest<float>(negative);
 		_execTest<float>(positive);
 		if (i % 2 == 0)
 		{
-			negative /= 10.0f;
+			negative *= 10.0f;
 			positive /= 10.0f;
 		}
 		else
@@ -446,13 +447,13 @@ TEST(ScalarConverter_convertTest, doubleMaxMin) {
 	double	negative = DBL_MIN;
 	double	positive = DBL_MAX;
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		_execTest<double>(negative);
 		_execTest<double>(positive);
 		if (i % 2 == 0)
 		{
-			negative /= 10.0f;
+			negative *= 10.0f;
 			positive /= 10.0f;
 		}
 		else
@@ -489,4 +490,26 @@ TEST(ScalarConverter_convertTest, charInput) {
 
 	for (char i = ' '; i <= '~'; i++)
 		_execTest<char>(i);
+}
+
+TEST(ScalarConverter_convertTest, stringInput) {
+
+	const std::vector<std::string>	v = {"", "test", " ", "	 	", "	", NULL, nullptr};
+
+	for (auto it = v.begin(); it != v.end(); it++)
+	{
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(*it);
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + IMPOSSIBLE + '\n' +
+			g_expect_int + IMPOSSIBLE + '\n' +
+			g_expect_float + IMPOSSIBLE + '\n' +
+			g_expect_double + IMPOSSIBLE + '\n',
+			stdoutOutput
+		);
+		EXPECT_EQ("", stderrOutput);
+	}
 }

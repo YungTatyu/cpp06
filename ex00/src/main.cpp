@@ -27,6 +27,7 @@ int	main(int argc, char *argv[])
 		std::cout << "\n";
 	}
 
+	std::cout <<  static_cast<float>(FLT_MIN) << "\n";
 	// std::cout << _getFloatValue<float, double>(1.1f) << "\n";
 	// std::cout << INT_MAX << "\n";
 	// std::cout << 2147483647.0f << "\n";
