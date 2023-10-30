@@ -38,7 +38,6 @@ static std::string	_getExpectCharValue(T input)
 	else
 		return std::isprint(static_cast<int>(input)) ?
 				"'" + std::string(1, static_cast<char>(input)) + "'" : "Non displayable";
-				// std::string(1, static_cast<char>(input)): "Non displayable";
 }
 
 template <typename T>
@@ -511,7 +510,6 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 
 	for (int i = 0; i < 100; i++)
 	{
-		// _execTest<double>(num);
 		_execTest<double>(num);
 		num += 0.3;
 	}

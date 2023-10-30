@@ -45,10 +45,6 @@ private:
 		char	remaining; //余り
 		const bool	isSuccess = static_cast<bool>(iss >> value);
 		const bool	hasRemaining = static_cast<bool>(iss >> remaining);
-		// std::cout << value <<"=value\n";
-		// std::cout << remaining <<"=remaining\n";
-		// std::cout << isSuccess <<"=isSuccess\n";
-		// std::cout << hasRemaining <<"=hasRemaing\n\n";
 
 		if (str == PNAN || str == NNAN)
 			return false;

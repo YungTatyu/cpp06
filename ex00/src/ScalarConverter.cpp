@@ -124,7 +124,7 @@ std::string	ScalarConverter::_getCharValue(int num)
 	if (num > ASCII_NUM || num < 0)
 		return IMPOSSIBLE;
 	else
-		return std::isprint(num) ? std::string(1, static_cast<char>(num)) : NOPRINT;
+		return std::isprint(num) ? "'" + std::string(1, static_cast<char>(num)) + "'" : NOPRINT;
 }
 
 
