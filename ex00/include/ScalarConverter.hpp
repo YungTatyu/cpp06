@@ -35,6 +35,7 @@ private:
 	static void	_convertDouble(double num);
 	static bool	_isConvertibleToAscii(const std::string& str);
 	static std::string	_popbackF(const std::string& str);
+	static std::string	_appendDecimalIfNeeded(const std::string& str);
 
 	template <typename T>
 	static bool	_isConvertible(const std::string& str)

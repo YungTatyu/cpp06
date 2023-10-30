@@ -56,11 +56,6 @@ static std::string	_getExpectIntValue(T input)
 template <typename T>
 static std::string	_getExpectFloatValue(T input)
 {
-	// const T	max = static_cast<T>(std::numeric_limits<float>::max());
-	// const T	min = static_cast<T>(std::numeric_limits<float>::min());
-
-	// if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
-	// 	return IMPOSSIBLE;
 	std::stringstream ss;
 
 	ss << static_cast<float>(input);
@@ -70,15 +65,22 @@ static std::string	_getExpectFloatValue(T input)
 template <typename T>
 static std::string	_getExpectDoubleValue(T input)
 {
-	// const T	max = static_cast<T>(std::numeric_limits<double>::max());
-	// const T	min = static_cast<T>(std::numeric_limits<double>::min());
-
-	// if (!std::isinf(max) && !std::isinf(min) && (input > max || input < min))
-	// 	return IMPOSSIBLE;
 	std::stringstream ss;
 
 	ss << static_cast<double>(input);
 	return ss.str();
+}
+
+std::string	_appendDecimal(const std::string& str)
+{
+	if (
+		str.find("nan") != std::string::npos ||
+		str.find("inf") != std::string::npos ||
+		str.find(".") != std::string::npos
+	)
+		return str;
+	else
+		return str + ".0";
 }
 
 TEST(ScalarConverter_convertTest, intMin) {
@@ -96,10 +98,10 @@ TEST(ScalarConverter_convertTest, intMin) {
 
 		std::stringstream ss;
 		ss << fNum;
-		const	std::string	expect_floatValue = ss.str() + ".0f";
+		const	std::string	expect_floatValue = _appendDecimal(ss.str()) + "f";
 		ss.str("");
 		ss << dNum;
-		const	std::string	expect_doubleValue = ss.str() + ".0";
+		const	std::string	expect_doubleValue = _appendDecimal(ss.str());
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();
 		ScalarConverter::convert(input.str());
@@ -133,10 +135,10 @@ TEST(ScalarConverter_convertTest, intMax) {
 		const std::string	expect_charValue = _getExpectCharValue<int>(i);
 		std::stringstream ss;
 		ss << fNum;
-		const	std::string	expect_floatValue = ss.str() + ".0f";
+		const	std::string	expect_floatValue = _appendDecimal(ss.str()) + "f";
 		ss.str("");
 		ss << dNum;
-		const	std::string	expect_doubleValue = ss.str() + ".0";
+		const	std::string	expect_doubleValue = _appendDecimal(ss.str());
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();
 		ScalarConverter::convert(input.str());
@@ -170,10 +172,10 @@ TEST(ScalarConverter_convertTest, intZero) {
 		const std::string	expect_charValue = _getExpectCharValue<int>(i);
 		std::stringstream ss;
 		ss << fNum;
-		const	std::string	expect_floatValue = ss.str() + ".0f";
+		const	std::string	expect_floatValue = _appendDecimal(ss.str()) + "f";
 		ss.str("");
 		ss << dNum;
-		const	std::string	expect_doubleValue = ss.str() + ".0";
+		const	std::string	expect_doubleValue = _appendDecimal(ss.str());
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();
 		ScalarConverter::convert(input.str());
@@ -205,10 +207,10 @@ TEST(ScalarConverter_convertTest, intOverFlow) {
 	const std::string	expect_intValue = IMPOSSIBLE;
 	std::stringstream ss;
 	ss << fNum;
-	const std::string	expect_floatValue = ss.str() + "f";
+	const std::string	expect_floatValue = _appendDecimal(ss.str()) + "f";
 	ss.str("");
 	ss << dNum;
-	const std::string	expect_doubleValue = ss.str();
+	const std::string	expect_doubleValue = _appendDecimal(ss.str());
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input.str());
@@ -236,10 +238,10 @@ TEST(ScalarConverter_convertTest, intUnderFlow) {
 	const std::string	expect_intValue = IMPOSSIBLE;
 	std::stringstream ss;
 	ss << fNum;
-	const std::string	expect_floatValue = ss.str() + "f";
+	const std::string	expect_floatValue = _appendDecimal(ss.str()) + "f";
 	ss.str("");
 	ss << dNum;
-	const std::string	expect_doubleValue = ss.str();
+	const std::string	expect_doubleValue = _appendDecimal(ss.str());
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
 	ScalarConverter::convert(input.str());
@@ -402,8 +404,8 @@ static void	_execTest(T input)
 	ss << input;
 	const std::string	expect_charValue = _getExpectCharValue<T>(input);
 	const std::string	expect_intValue = _getExpectIntValue<T>(input);
-	const std::string	expect_floatValue = _getExpectFloatValue<T>(input) + "f";
-	const std::string	expect_doubleValue = _getExpectDoubleValue<T>(input);
+	const std::string	expect_floatValue = _appendDecimal(_getExpectFloatValue<T>(input)) + "f";
+	const std::string	expect_doubleValue = _appendDecimal(_getExpectDoubleValue<T>(input));
 
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
@@ -426,10 +428,8 @@ static void	_execFloatTest(T input)
 	ss << input;
 	const std::string	expect_charValue = _getExpectCharValue<T>(input);
 	const std::string	expect_intValue = _getExpectIntValue<T>(input);
-	const std::string	expect_floatValue = std::abs(static_cast<float>(input) - std::floor(static_cast<float>(input))) > std::numeric_limits<float>::epsilon() ?
-		_getExpectFloatValue<T>(input) + "f" : _getExpectFloatValue<T>(input) + ".0f";
-	const std::string	expect_doubleValue = std::abs(static_cast<double>(input) - std::floor(static_cast<double>(input))) > std::numeric_limits<double>::epsilon() ?
-		_getExpectDoubleValue<T>(input) : _getExpectDoubleValue<T>(input) + ".0";
+	const std::string	expect_floatValue = _appendDecimal(_getExpectFloatValue<T>(input)) + "f";
+	const std::string	expect_doubleValue = _appendDecimal(_getExpectDoubleValue<T>(input));
 
 	testing::internal::CaptureStdout();
 	testing::internal::CaptureStderr();
@@ -499,8 +499,8 @@ TEST(ScalarConverter_convertTest, floatInput) {
 		input += "f";
 		const std::string	expect_charValue = _getExpectCharValue<float>(num);
 		const std::string	expect_intValue = _getExpectIntValue<float>(num);
-		const std::string	expect_floatValue = _getExpectFloatValue<float>(num) + "f";
-		const std::string	expect_doubleValue = _getExpectDoubleValue<float>(num);
+		const std::string	expect_floatValue = _appendDecimal(_getExpectFloatValue<float>(num)) + "f";
+		const std::string	expect_doubleValue = _appendDecimal(_getExpectDoubleValue<float>(num));
 
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();

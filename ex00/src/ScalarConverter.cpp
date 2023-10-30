@@ -62,14 +62,27 @@ bool	ScalarConverter::_isConvertibleToAscii(const std::string& str)
 	return str.size() == 1 && !std::isdigit(str[0]) && std::isprint(str[0]);
 }
 
+std::string	ScalarConverter::_appendDecimalIfNeeded(const std::string& str)
+{
+	if (
+		str.find("nan") != std::string::npos ||
+		str.find("inf") != std::string::npos ||
+		str.find(".") != std::string::npos
+	)
+		return str;
+	else
+		return str + DBLE;
+}
+
+
 void	ScalarConverter::_convertChar(char c)
 {
 	const int	value = static_cast<int>(c);
 
 	const std::string	charValue = std::string("'") + c + "'";
 	const std::string	intValue = convertToString<int>(value);
-	const std::string	floatValue = convertToString<float>(static_cast<float>(value)) + DBLE + FLTE;
-	const std::string	doubleValue = convertToString<double>(static_cast<double>(value)) + DBLE;
+	const std::string	floatValue = _appendDecimalIfNeeded(convertToString<float>(static_cast<float>(value))) + FLTE;
+	const std::string	doubleValue = _appendDecimalIfNeeded(convertToString<double>(static_cast<double>(value)));
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
@@ -77,8 +90,8 @@ void	ScalarConverter::_convertInt(int num)
 {
 	const std::string	charValue = _getCharValue(num);
 	const std::string	intValue = convertToString<int>(num);
-	const std::string	floatValue = convertToString<float>(static_cast<float>(num)) + DBLE + FLTE;
-	const std::string	doubleValue = convertToString<double>(static_cast<double>(num)) + DBLE;
+	const std::string	floatValue = _appendDecimalIfNeeded(convertToString<float>(static_cast<float>(num))) + FLTE;
+	const std::string	doubleValue = _appendDecimalIfNeeded(convertToString<double>(static_cast<double>(num)));
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
@@ -88,8 +101,8 @@ void	ScalarConverter::_convertFloat(float num)
 
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<float>(num);
-	const std::string	floatValue = convertToString<float>(num) + FLTE;
-	const std::string	doubleValue = _getFloatValue<double, float>(num);
+	const std::string	floatValue = _appendDecimalIfNeeded(convertToString<float>(num)) + FLTE;
+	const std::string	doubleValue = _appendDecimalIfNeeded(convertToString<double>(static_cast<double>(num)));
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
@@ -99,10 +112,8 @@ void	ScalarConverter::_convertDouble(double num)
 
 	const std::string	charValue = _getCharValue(intNum);
 	const std::string	intValue = _getIntValue<double>(num);
-	const std::string	floatValue = _getFloatValue<float, double>(num) + FLTE;
-	const std::string	doubleValue = convertToString<double>(num);
-	// std::string	doubleValue = convertToString<double>(num);
-	// doubleValue = doubleValue.find(".") == std::string::npos ? doubleValue + DBLE : doubleValue;
+	const std::string	floatValue = _appendDecimalIfNeeded(convertToString<float>(static_cast<float>(num))) + FLTE;
+	const std::string	doubleValue = _appendDecimalIfNeeded(convertToString<double>(num));
 	_print(charValue, intValue, floatValue, doubleValue);
 }
 
