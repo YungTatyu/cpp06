@@ -25,15 +25,8 @@ const std::string	g_expect_double = "double: ";
 template <typename T>
 static std::string	_getExpectCharValue(T input)
 {
-	const T	max = static_cast<T>(std::numeric_limits<char>::max());
-	const T	min = static_cast<T>(std::numeric_limits<char>::min());
 
-	if (
-		input > max
-		|| input < min
-		|| static_cast<int>(input) > ASCII_NUM
-		|| static_cast<int>(input) < 0
-	)
+	if (static_cast<int>(input) > ASCII_NUM || static_cast<int>(input) < 0)
 		return IMPOSSIBLE;
 	else
 		return std::isprint(static_cast<int>(input)) ?
