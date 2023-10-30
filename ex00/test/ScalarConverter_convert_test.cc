@@ -421,30 +421,6 @@ static void	_execTest(T input)
 	);
 }
 
-template <typename T>
-static void	_execFloatTest(T input)
-{
-	std::stringstream ss;
-	ss << input;
-	const std::string	expect_charValue = _getExpectCharValue<T>(input);
-	const std::string	expect_intValue = _getExpectIntValue<T>(input);
-	const std::string	expect_floatValue = _appendDecimal(_getExpectFloatValue<T>(input)) + "f";
-	const std::string	expect_doubleValue = _appendDecimal(_getExpectDoubleValue<T>(input));
-
-	testing::internal::CaptureStdout();
-	testing::internal::CaptureStderr();
-	ScalarConverter::convert(ss.str());
-	std::string stdoutOutput = testing::internal::GetCapturedStdout();
-	std::string stderrOutput = testing::internal::GetCapturedStderr();
-	EXPECT_EQ(
-		g_expect_char + expect_charValue + '\n' +
-		g_expect_int + expect_intValue + '\n' +
-		g_expect_float + expect_floatValue + '\n' +
-		g_expect_double + expect_doubleValue + '\n',
-		stdoutOutput
-	);
-}
-
 TEST(ScalarConverter_convertTest, floatMaxMin) {
 
 	float	negative = FLT_MIN;
@@ -526,11 +502,8 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 	for (int i = 0; i < 100; i++)
 	{
 		// _execTest<double>(num);
-		_execFloatTest<double>(num);
-		if (i % 10 == 0)
-			num += 0.1;
-		else
-			num += 0.3;
+		_execTest<double>(num);
+		num += 0.3;
 	}
 }
 

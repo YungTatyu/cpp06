@@ -109,6 +109,11 @@ public:
 		iss >> value;
 		return value;
 	}
+	template <>
+	char	stringToType<char>(const std::string& str)
+	{
+		return str != " " ? str[0] : ' ';
+	}
 };
 
 #endif

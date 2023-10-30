@@ -23,15 +23,20 @@ int	main(int argc, char *argv[])
 	while (argc != 1)
 	{
 		std::cout << "converting " << argv[--argc] << "...\n";
+		std::cout << argv[argc] << "$\n";
 		ScalarConverter::convert(argv[argc]);
 		std::cout << "\n";
 	}
-	std::stringstream	ss;
+
+	// std::cout << static_cast<int>(6.0) << '\n';
+
+	// std::stringstream	ss;
 	// ss << DBL_MAX;
-	ss << DBL_MIN;
-	std::cout <<  ss.str() << "\n";
-	ScalarConverter::convert(ss.str());
-	std::cout << (0.0 < DBL_MIN) << "\n";
+	// ss << DBL_MIN;
+	// std::cout <<  ss.str() << "\n";
+	// ScalarConverter::convert(ss.str());
+	// std::cout << (0.0 < DBL_MIN) << "\n";
+
 	// std::istringstream iss(ss.str());
 	// double	value;
 	// iss >> value;
