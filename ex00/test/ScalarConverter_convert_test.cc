@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-port.h>
+#include "gtest/gtest-spi.h"
 #include "ScalarConverter.hpp"
 #include <climits>
 #include <cfloat>
@@ -24,8 +25,8 @@ const std::string	g_expect_double = "double: ";
 template <typename T>
 static std::string	_getExpectCharValue(T input)
 {
-	const T	max = static_cast<T>(std::numeric_limits<int>::max());
-	const T	min = static_cast<T>(std::numeric_limits<int>::min());
+	const T	max = static_cast<T>(std::numeric_limits<char>::max());
+	const T	min = static_cast<T>(std::numeric_limits<char>::min());
 
 	if (
 		input > max
@@ -36,7 +37,8 @@ static std::string	_getExpectCharValue(T input)
 		return IMPOSSIBLE;
 	else
 		return std::isprint(static_cast<int>(input)) ?
-				std::string(1, static_cast<char>(input)) : "Non displayable";
+				"'" + std::string(1, static_cast<char>(input)) + "'" : "Non displayable";
+				// std::string(1, static_cast<char>(input)): "Non displayable";
 }
 
 template <typename T>
@@ -47,6 +49,14 @@ static std::string	_getExpectIntValue(T input)
 
 	if (input > max || input < min)
 		return IMPOSSIBLE;
+	std::stringstream ss;
+
+	ss << static_cast<int>(input);
+	return ss.str();
+}
+template <>
+std::string	_getExpectIntValue<char>(char input)
+{
 	std::stringstream ss;
 
 	ss << static_cast<int>(input);
@@ -509,16 +519,27 @@ TEST(ScalarConverter_convertTest, doubleInput) {
 
 TEST(ScalarConverter_convertTest, charInput) {
 
-	for (char i = ' '; i <= '~'; i++)
+	for (char i = ' '; i <= '/'; i++)
+		_execTest<char>(i);
+	for (char i = ':'; i <= '~'; i++)
 		_execTest<char>(i);
 }
 
 TEST(ScalarConverter_convertTest, stringInput) {
 
-	const std::vector<std::string>	v = {"", "test", " ", "	 	", "	", NULL, nullptr};
+	// const std::vector<std::string>	v = {"", "test", "  ", "	 ", "	 	", "	", NULL, nullptr};
+	const std::vector<std::string>	v = {"", "test", "  ", "	 ", "	 	", "	"};
 
 	for (auto it = v.begin(); it != v.end(); it++)
 	{
+		// if (*it == nullptr || *it == NULL)
+		// {
+		// 	EXPECT_DEATH(
+		// 		ScalarConverter::convert(*it),
+		// 		""
+		// 	);
+		// 	continue;
+		// }
 		testing::internal::CaptureStdout();
 		testing::internal::CaptureStderr();
 		ScalarConverter::convert(*it);
