@@ -26,6 +26,15 @@ int	main(int argc, char *argv[])
 		ScalarConverter::convert(argv[--argc]);
 		// std::cout << "\n";
 	}
+	// double	num = 0.0;
+	// for (int i = 0; i < 100; i++)
+	// {
+	// 	std::cout << "\nfloat:" << num << "\n";
+	// 	std::cout << "int:" << static_cast<int>(num) << "\n";
+	// 	std::cout << ScalarConverter::convertToString<double>(num) << "\n";
+	// 	ScalarConverter::convert(ScalarConverter::convertToString<double>(num));
+	// 	num += 0.3;
+	// }
 
 	// std::cout << static_cast<int>(6.0) << '\n';
 
