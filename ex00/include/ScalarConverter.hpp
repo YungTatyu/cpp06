@@ -28,6 +28,9 @@ private:
 		TP_STR,
 	};
 	ScalarConverter();
+	ScalarConverter(const ScalarConverter& other);
+	~ScalarConverter();
+	ScalarConverter&	operator=(const ScalarConverter& other);
 	static enum type _getStringType(const std::string& str);
 	static void	_convertChar(char c);
 	static void	_convertInt(int num);
