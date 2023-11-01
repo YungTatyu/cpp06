@@ -18,8 +18,9 @@ enable_testing()
 
 add_executable(
   mytest
-  test/ScalarConverter_convert_test.cc
-  src/ScalarConverter.cpp
+  test/Serializer_test.cc
+  src/Serializer.cpp
+  src/Data.cpp
 )
 
 include_directories(
