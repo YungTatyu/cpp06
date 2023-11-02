@@ -18,9 +18,8 @@ enable_testing()
 
 add_executable(
   mytest
-  test/Serializer_test.cc
-  src/Serializer.cpp
-  src/Data.cpp
+  test/identify_test.cc
+  src/identify.cpp
 )
 
 include_directories(

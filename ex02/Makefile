@@ -1,15 +1,13 @@
 NAME = a.out
 CXX = c++
 CXXFLAGS = -std=c++98 -Wall -Wextra -Werror -MMD -MP
-CXXFLAGS += -Wconversion
 ifdef	DEBUG
 	CXXFLAGS += -fsanitize=address
 endif
 
 SRCS_DIR = src
 SRC =	main.cpp	\
-		Serializer.cpp	\
-		Data.cpp
+		identify.cpp
 SRCS = $(addprefix $(SRCS_DIR)/, $(SRC))
 
 INCLUDES_DIR = include
