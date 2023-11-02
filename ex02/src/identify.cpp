@@ -35,6 +35,15 @@ Base	*generate(void)
 	return ptr;
 }
 
+
+/**
+ *
+ * dynamic_castを使用する際は、基底クラスに仮想関数virtual関数が必要
+ * キャスト成功か否かを判断するのにvpointerを見るから
+ *
+ *
+ * @param p
+ */
 void	identify(Base* p)
 {
 	if (dynamic_cast<A *>(p) != NULL)
