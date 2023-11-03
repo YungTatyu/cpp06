@@ -5,7 +5,8 @@
 
 void	ScalarConverter::convert(std::string str)
 {
-	const enum type	type = ScalarConverter::_getStringType(str);
+	std::string	lowerdStr = _str_tolower(str);
+	const enum type	type = ScalarConverter::_getStringType(lowerdStr);
 
 	switch (type)
 	{
@@ -13,13 +14,13 @@ void	ScalarConverter::convert(std::string str)
 		_convertChar(stringToType<char>(str));
 		break;
 	case TP_INT:
-		_convertInt(stringToType<int>(str));
+		_convertInt(stringToType<int>(lowerdStr));
 		break;
 	case TP_FLOAT:
-		_convertFloat(stringToType<float>(_popbackF(str)));
+		_convertFloat(stringToType<float>(_popbackF(lowerdStr)));
 		break;
 	case TP_DOUBLE:
-		_convertDouble(stringToType<double>(str));
+		_convertDouble(stringToType<double>(lowerdStr));
 		break;
 	default:
 		_print(IMPOSSIBLE, IMPOSSIBLE, IMPOSSIBLE, IMPOSSIBLE);
@@ -39,6 +40,17 @@ enum ScalarConverter::type	ScalarConverter::_getStringType(const std::string& st
 		return TP_FLOAT;
 	else
 		return TP_STR;
+}
+
+std::string	ScalarConverter::_str_tolower(std::string& str)
+{
+	std::string	newStr;
+
+	for (std::string::iterator it = str.begin(); it != str.end(); it++)
+	{
+		newStr += std::tolower(static_cast<unsigned char>(*it));
+	}
+	return newStr;
 }
 
 std::string	ScalarConverter::_popbackF(const std::string& str)

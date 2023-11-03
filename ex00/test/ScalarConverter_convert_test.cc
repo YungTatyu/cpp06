@@ -261,49 +261,59 @@ TEST(ScalarConverter_convertTest, intUnderFlow) {
 
 TEST(ScalarConverter_convertTest, nan) {
 
-	const std::string	input = NAND;
+	std::vector<std::string>	v = {NAND, "NaN", "Nan", "nAn", "naN"};
 
-	const std::string	expect_charValue = IMPOSSIBLE;
-	const std::string	expect_intValue = IMPOSSIBLE;
-	const std::string	expect_floatValue = NANF;
-	const std::string	expect_doubleValue = NAND;
-	testing::internal::CaptureStdout();
-	testing::internal::CaptureStderr();
-	ScalarConverter::convert(input);
-	std::string stdoutOutput = testing::internal::GetCapturedStdout();
-	std::string stderrOutput = testing::internal::GetCapturedStderr();
-	EXPECT_EQ(
-		g_expect_char + expect_charValue + '\n' +
-		g_expect_int + expect_intValue + '\n' +
-		g_expect_float + expect_floatValue + '\n' +
-		g_expect_double + expect_doubleValue + '\n',
-		stdoutOutput
-	);
-	EXPECT_EQ("", stderrOutput);
+	for (auto it = v.begin(); it != v.end(); it++)
+	{
+		const std::string	input = *it;
+
+		const std::string	expect_charValue = IMPOSSIBLE;
+		const std::string	expect_intValue = IMPOSSIBLE;
+		const std::string	expect_floatValue = NANF;
+		const std::string	expect_doubleValue = NAND;
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(input);
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + expect_charValue + '\n' +
+			g_expect_int + expect_intValue + '\n' +
+			g_expect_float + expect_floatValue + '\n' +
+			g_expect_double + expect_doubleValue + '\n',
+			stdoutOutput
+		);
+		EXPECT_EQ("", stderrOutput);
+	}
 }
 
 
 TEST(ScalarConverter_convertTest, nanf) {
 
-	const std::string	input = NANF;
+	std::vector<std::string>	v = {NANF, "NaNF", "Nanf", "nAnf", "nanF"};
 
-	const std::string	expect_charValue = IMPOSSIBLE;
-	const std::string	expect_intValue = IMPOSSIBLE;
-	const std::string	expect_floatValue = NANF;
-	const std::string	expect_doubleValue = NAND;
-	testing::internal::CaptureStdout();
-	testing::internal::CaptureStderr();
-	ScalarConverter::convert(input);
-	std::string stdoutOutput = testing::internal::GetCapturedStdout();
-	std::string stderrOutput = testing::internal::GetCapturedStderr();
-	EXPECT_EQ(
-		g_expect_char + expect_charValue + '\n' +
-		g_expect_int + expect_intValue + '\n' +
-		g_expect_float + expect_floatValue + '\n' +
-		g_expect_double + expect_doubleValue + '\n',
-		stdoutOutput
-	);
-	EXPECT_EQ("", stderrOutput);
+	for (auto it = v.begin(); it != v.end(); it++)
+	{
+		const std::string	input = *it;
+
+		const std::string	expect_charValue = IMPOSSIBLE;
+		const std::string	expect_intValue = IMPOSSIBLE;
+		const std::string	expect_floatValue = NANF;
+		const std::string	expect_doubleValue = NAND;
+		testing::internal::CaptureStdout();
+		testing::internal::CaptureStderr();
+		ScalarConverter::convert(input);
+		std::string stdoutOutput = testing::internal::GetCapturedStdout();
+		std::string stderrOutput = testing::internal::GetCapturedStderr();
+		EXPECT_EQ(
+			g_expect_char + expect_charValue + '\n' +
+			g_expect_int + expect_intValue + '\n' +
+			g_expect_float + expect_floatValue + '\n' +
+			g_expect_double + expect_doubleValue + '\n',
+			stdoutOutput
+		);
+		EXPECT_EQ("", stderrOutput);
+	}
 }
 
 
@@ -519,7 +529,7 @@ TEST(ScalarConverter_convertTest, charInput) {
 TEST(ScalarConverter_convertTest, stringInput) {
 
 	// const std::vector<std::string>	v = {"", "test", "  ", "	 ", "	 	", "	", NULL, nullptr};
-	const std::vector<std::string>	v = {"", "test", "  ", "	 ", "	 	", "	"};
+	const std::vector<std::string>	v = {"", "test", "  ", "	 ", "	 	", "	", "+nan", "-nan", "+NaN", "-NaN"};
 
 	for (auto it = v.begin(); it != v.end(); it++)
 	{
